@@ -1,5 +1,4 @@
 package controller;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -8,9 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.AnalyzeLogs;
 import model.Log;
-
+import javafx.scene.text.Text;
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 public class AnalyzeViewController {
 
@@ -19,6 +17,7 @@ public class AnalyzeViewController {
     @FXML private TableColumn<Log, String> tbcMessage;
     @FXML private TextField txtPath;
     @FXML private TableView<Log> tbvOutput;
+    @FXML private Text txtResults;
     private AnalyzeLogs analyzer;
     private ArrayList<Log> logs;
 
@@ -26,7 +25,6 @@ public class AnalyzeViewController {
 
 
     public void initialize() {
-        analyzer = new AnalyzeLogs();
         logs = new ArrayList<>();
         tbvOutput.setEditable(false);
         tbcDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -41,8 +39,9 @@ public class AnalyzeViewController {
             filePath = txtPath.getText();
         }
 
-        logs = analyzer.analyzeLogs(filePath);
-        System.out.println(logs);
+        analyzer = new AnalyzeLogs(filePath);
+        logs = analyzer.analyzeLogs();
+        showSummary();
         refreshTable();
     }
 
@@ -51,6 +50,10 @@ public class AnalyzeViewController {
         for (Log log : logs) {
             tbvOutput.getItems().add(log);
         }
+    }
+
+    private void showSummary(){
+        txtResults.setText(analyzer.getSummary().toString());
     }
 
 

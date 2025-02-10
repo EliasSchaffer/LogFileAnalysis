@@ -5,13 +5,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnalyzeLogs {
 
-    public ArrayList<Log> analyzeLogs(String filePath) {
+    private String filePath;
+    private Map<String, Integer> summary;
+
+    public AnalyzeLogs(String filePath) {
+        this.filePath = filePath;
+        summary = new HashMap<>();
+    }
+
+    public ArrayList<Log> analyzeLogs() {
         File file = new File(filePath);
         ArrayList<String> stringLogs = new ArrayList<>();
         ArrayList<Log> logs = new ArrayList<>();
@@ -19,6 +29,8 @@ public class AnalyzeLogs {
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
                 reader.lines().forEach(stringLogs::add);
+
+
             } catch (Exception e) {
                 e.printStackTrace(); // Log any errors
             }
@@ -39,6 +51,10 @@ public class AnalyzeLogs {
                 }
             }
         }
+
+        for (Log log : logs) {
+            summary.put(log.getLevel(), summary.getOrDefault(log.getLevel(), 0) + 1);
+        }
         return logs;
     }
 
@@ -55,5 +71,9 @@ public class AnalyzeLogs {
         } else {
             return LocalDateTime.of(1, 1, 1, 0, 0, 0);
         }
+    }
+
+    public Map<String, Integer> getSummary() {
+        return summary;
     }
 }
